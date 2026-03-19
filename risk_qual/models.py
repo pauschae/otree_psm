@@ -69,8 +69,3 @@ class Player(BasePlayer):
             In general, how willing or unwilling are you to take risks?
             """,
             widget=widgets.RadioSelect)
-
-    # create function to increase part index by 1 when App changes
-    # ------------------------------------------------------------------------------------------------------------------
-    def update_part_index(self):
-        self.participant.vars['part_index'] += 1
