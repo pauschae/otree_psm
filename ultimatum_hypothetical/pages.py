@@ -1,6 +1,9 @@
 from otree.api import Currency as c, currency_range
 from ._builtin import Page, WaitPage
 from .models import Constants
+from shared_utils import app_number
+
+APP_NAME = 'ultimatum_hypothetical'
 
 
 class Decision(Page):
@@ -10,11 +13,8 @@ class Decision(Page):
     def vars_for_template(self):
         return dict(
             endowment=Constants.endowment,
-            part_index=self.participant.vars['part_index']
+            part_index=app_number(self.player, APP_NAME)
         )
-
-    def before_next_page(self):
-        return self.player.update_part_index()
 
 
 page_sequence = [Decision]

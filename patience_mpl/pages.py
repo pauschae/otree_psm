@@ -2,6 +2,9 @@ from otree.api import Currency as c, currency_range
 from . import models
 from ._builtin import Page, WaitPage
 from .models import Constants
+from shared_utils import app_number
+
+APP_NAME = 'patience_mpl'
 
 
 # variables for all templates
@@ -11,7 +14,7 @@ def vars_for_all_templates(self):
         'payment': Constants.payment,
         'currency': Constants.currency,
         'results': Constants.results,
-        'part_index': self.participant.vars['part_index']
+        'part_index': app_number(self.player, APP_NAME)
     }
 
 
@@ -128,8 +131,6 @@ class Decision(Page):
             # set switching row
             self.player.set_switching_row()
 
-            # update part index
-            return self.player.update_part_index()
 
 
 # ******************************************************************************************************************** #

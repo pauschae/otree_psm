@@ -2,6 +2,9 @@ from otree.api import Currency as c, currency_range
 from . import models
 from ._builtin import Page, WaitPage
 from .models import Constants
+from shared_utils import app_number
+
+APP_NAME = 'risk_mpl'
 
 
 # variables for all templates
@@ -12,7 +15,7 @@ def vars_for_all_templates(self):
         'lottery_hi': Constants.lottery_hi,
         'safe_payment': Constants.safe_payment,
         'currency': Constants.currency,
-        'part_index': self.participant.vars['part_index'],
+        'part_index': app_number(self.player, APP_NAME),
         'results': Constants.results
     }
 
@@ -126,8 +129,6 @@ class Decision(Page):
             self.player.set_consistency()
             # set switching row
             self.player.set_switching_row()
-            # update part index
-            return self.player.update_part_index()
 
 
 # ******************************************************************************************************************** #
