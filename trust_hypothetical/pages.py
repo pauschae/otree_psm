@@ -1,7 +1,9 @@
 from otree.api import Currency as c, currency_range
 from ._builtin import Page, WaitPage
 from .models import Constants
-from shared_utils import common_template_vars
+from shared_utils import app_number
+
+APP_NAME = 'trust_hypothetical'
 
 APP_NAME = 'trust_hypothetical'
 
@@ -15,6 +17,8 @@ def base_template_vars(player, page_number):
         rate=Constants.rate,
         max_endowment=Constants.max_endowment,
         other_transfer=Constants.other_transfer,
+        page=self.subsession.round_number,
+        part_index=app_number(self.player, APP_NAME),
         currency=Constants.currency,
         instructions=Constants.instructions_template,
         page=page_number,
@@ -71,9 +75,6 @@ class Sender(Page):
     # ----------------------------------------------------------------------------------------------------------------
     def is_displayed(self):
         return self.subsession.round_number == Constants.num_rounds
-
-    def vars_for_template(self):
-        return base_template_vars(self.player, self.subsession.round_number)
 
 
 page_sequence = [Introduction, Receiver, Sender]

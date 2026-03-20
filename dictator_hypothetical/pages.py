@@ -1,7 +1,8 @@
 from otree.api import Currency as c, currency_range
 from ._builtin import Page, WaitPage
 from .models import Constants
-from shared_utils import common_template_vars
+
+from shared_utils import app_number
 
 APP_NAME = 'dictator_hypothetical'
 
@@ -17,6 +18,7 @@ class Altruism(Page):
             APP_NAME,
             endowment_str="{:,}".format(Constants.endowment),
             endowment=Constants.endowment,
+            part_index=app_number(self.player, APP_NAME)
         )
 
 

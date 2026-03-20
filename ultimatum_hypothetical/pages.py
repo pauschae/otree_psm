@@ -1,7 +1,7 @@
 from otree.api import Currency as c, currency_range
 from ._builtin import Page, WaitPage
 from .models import Constants
-from shared_utils import common_template_vars
+from shared_utils import app_number
 
 APP_NAME = 'ultimatum_hypothetical'
 
@@ -16,6 +16,7 @@ class Decision(Page):
             Constants,
             APP_NAME,
             endowment=Constants.endowment,
+            part_index=app_number(self.player, APP_NAME)
         )
 
 

@@ -2,22 +2,25 @@ from otree.api import Currency as c, currency_range
 from . import models
 from ._builtin import Page, WaitPage
 from .models import Constants
-from shared_utils import common_template_vars
+from shared_utils import app_number
 
 APP_NAME = 'patience_staircase'
 
+APP_NAME = 'patience_staircase'
 
-def base_template_vars(player):
-    return common_template_vars(
-        player,
-        Constants,
-        APP_NAME,
-        p_hi="{0:.0f}".format(Constants.probability) + "%",
-        p_lo="{0:.0f}".format(100 - Constants.probability) + "%",
-        hi="{0:.0f}".format(Constants.lottery_hi),
-        lo="{0:.0f}".format(Constants.lottery_lo),
-        currency=Constants.currency,
-    )
+# variables for all templates
+# --------------------------------------------------------------------------------------------------------------------
+def vars_for_all_templates(self):
+    return {
+        # 'p_hi': "{0:.1f}".format(Constants.probability) + "%",
+        # 'p_lo': "{0:.1f}".format(100 - Constants.probability) + "%",
+        'p_hi': "{0:.0f}".format(Constants.probability) + "%",
+        'p_lo': "{0:.0f}".format(100 - Constants.probability) + "%",
+        'hi':   "{0:.0f}".format(Constants.lottery_hi),
+        'lo':   "{0:.0f}".format(Constants.lottery_lo),
+        'part_index': app_number(self.player, APP_NAME),
+        'currency': Constants.currency
+    }
 
 
 # ******************************************************************************************************************** #

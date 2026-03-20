@@ -1,7 +1,7 @@
 from otree.api import Currency as c, currency_range
 from ._builtin import Page, WaitPage
 from .models import Constants
-from shared_utils import common_template_vars
+from shared_utils import app_number
 
 APP_NAME = 'pos_reciprocity'
 
@@ -18,6 +18,7 @@ class Reciprocity(Page):
             stranger_cost=Constants.stranger_cost,
             cheap_present=Constants.cheap_present,
             expensive_present=Constants.expensive_present,
+            part_index=app_number(self.player, APP_NAME)
         )
 
 
