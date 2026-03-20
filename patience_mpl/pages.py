@@ -2,17 +2,20 @@ from otree.api import Currency as c, currency_range
 from . import models
 from ._builtin import Page, WaitPage
 from .models import Constants
+from shared_utils import common_template_vars
+
+APP_NAME = 'patience_mpl'
 
 
-# variables for all templates
-# --------------------------------------------------------------------------------------------------------------------
-def vars_for_all_templates(self):
-    return {
-        'payment': Constants.payment,
-        'currency': Constants.currency,
-        'results': Constants.results,
-        'part_index': self.participant.vars['part_index']
-    }
+def base_template_vars(player):
+    return common_template_vars(
+        player,
+        Constants,
+        APP_NAME,
+        payment=Constants.payment,
+        currency=Constants.currency,
+        results=Constants.results,
+    )
 
 
 # ******************************************************************************************************************** #
@@ -28,7 +31,7 @@ class Instructions(Page):
     # variables for template
     # ----------------------------------------------------------------------------------------------------------------
     def vars_for_template(self):
-        return {
+        return base_template_vars(self.player) | {
             'num_choices':  len(self.participant.vars['patience_choices']),
             'list_payments': self.participant.vars['list_payments'],
             'payment1': self.participant.vars['list_payments'][0],
@@ -71,14 +74,14 @@ class Decision(Page):
         progress = page / total * 100
 
         if Constants.one_choice_per_page:
-            return {
+            return base_template_vars(self.player) | {
                 'page':      page,
                 'total':     total,
                 'progress':  progress,
-                'choices':   [self.player.participant.vars['patience_choices'][page - 1]]
+                'choices':   [self.player.participant.vars['patience_choices'][page - 1]],
             }
         else:
-            return {
+            return base_template_vars(self.player) | {
                 'choices':   self.player.participant.vars['patience_choices'],
             }
 
@@ -128,8 +131,6 @@ class Decision(Page):
             # set switching row
             self.player.set_switching_row()
 
-            # update part index
-            return self.player.update_part_index()
 
 
 # ******************************************************************************************************************** #
@@ -159,18 +160,18 @@ class Results(Page):
         choice_to_pay = self.participant.vars['patience_choices'][round_to_pay - 1]
 
         if Constants.one_choice_per_page:
-            return {
+            return base_template_vars(self.player) | {
                 'choice_to_pay':  [choice_to_pay],
                 'option_to_pay':  self.player.in_round(round_to_pay).option_to_pay,
                 'payoff':         self.player.in_round(round_to_pay).payoff,
             }
         else:
-            return {
+            return base_template_vars(self.player) | {
                 'choice_to_pay':  [choice_to_pay],
                 'option_to_pay':  self.player.option_to_pay,
                 'payoff':         self.player.payoff,
                 'option_chosen': self.participant.vars['option_chosen'],
-                'index_to_pay': self.participant.vars['patience_index_to_pay']
+                'index_to_pay': self.participant.vars['patience_index_to_pay'],
             }
 
 

@@ -2,21 +2,22 @@ from otree.api import Currency as c, currency_range
 from . import models
 from ._builtin import Page, WaitPage
 from .models import Constants
+from shared_utils import common_template_vars
+
+APP_NAME = 'patience_staircase'
 
 
-# variables for all templates
-# --------------------------------------------------------------------------------------------------------------------
-def vars_for_all_templates(self):
-    return {
-        # 'p_hi': "{0:.1f}".format(Constants.probability) + "%",
-        # 'p_lo': "{0:.1f}".format(100 - Constants.probability) + "%",
-        'p_hi': "{0:.0f}".format(Constants.probability) + "%",
-        'p_lo': "{0:.0f}".format(100 - Constants.probability) + "%",
-        'hi':   "{0:.0f}".format(Constants.lottery_hi),
-        'lo':   "{0:.0f}".format(Constants.lottery_lo),
-        'part_index': self.participant.vars['part_index'],
-        'currency': Constants.currency
-    }
+def base_template_vars(player):
+    return common_template_vars(
+        player,
+        Constants,
+        APP_NAME,
+        p_hi="{0:.0f}".format(Constants.probability) + "%",
+        p_lo="{0:.0f}".format(100 - Constants.probability) + "%",
+        hi="{0:.0f}".format(Constants.lottery_hi),
+        lo="{0:.0f}".format(Constants.lottery_lo),
+        currency=Constants.currency,
+    )
 
 
 # ******************************************************************************************************************** #
@@ -30,7 +31,7 @@ class Instructions(Page):
         return self.subsession.round_number == 1
 
     def vars_for_template(self):
-        return dict(
+        return base_template_vars(self.player) | dict(
             today=Constants.today,
             in_12_months=Constants.in_12_months
         )
@@ -61,11 +62,11 @@ class Decision(Page):
         page = self.subsession.round_number
         progress = page / total * 100
 
-        return {
+        return base_template_vars(self.player) | {
             'page':        page,
             'total':       total,
             'progress':    progress,
-            'sure_payoff': "{0:.0f}".format(self.participant.vars['icl_time_sure_payoffs'][page - 1])
+            'sure_payoff': "{0:.0f}".format(self.participant.vars['icl_time_sure_payoffs'][page - 1]),
         }
 
     # set sure payoffs for next choice, payoffs, and switching row
@@ -74,8 +75,6 @@ class Decision(Page):
         self.player.set_sure_payoffs()
         self.player.update_switching_row()
         self.player.set_final_switching_row()
-        if self.subsession.round_number == Constants.num_choices:
-            self.player.update_part_index()
 
 
 # ******************************************************************************************************************** #
@@ -85,5 +84,4 @@ page_sequence = [Decision]
 
 if Constants.instructions:
     page_sequence.insert(0, Instructions)
-
 

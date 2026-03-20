@@ -2,19 +2,22 @@ from otree.api import Currency as c, currency_range
 from . import models
 from ._builtin import Page, WaitPage
 from .models import Constants
+from shared_utils import common_template_vars
+
+APP_NAME = 'risk_mpl'
 
 
-# variables for all templates
-# --------------------------------------------------------------------------------------------------------------------
-def vars_for_all_templates(self):
-    return {
-        'lottery_lo': Constants.lottery_lo,
-        'lottery_hi': Constants.lottery_hi,
-        'safe_payment': Constants.safe_payment,
-        'currency': Constants.currency,
-        'part_index': self.participant.vars['part_index'],
-        'results': Constants.results
-    }
+def base_template_vars(player):
+    return common_template_vars(
+        player,
+        Constants,
+        APP_NAME,
+        lottery_lo=Constants.lottery_lo,
+        lottery_hi=Constants.lottery_hi,
+        safe_payment=Constants.safe_payment,
+        currency=Constants.currency,
+        results=Constants.results,
+    )
 
 
 # ******************************************************************************************************************** #
@@ -30,10 +33,10 @@ class Instructions(Page):
     # variables for template
     # ----------------------------------------------------------------------------------------------------------------
     def vars_for_template(self):
-        return {
+        return base_template_vars(self.player) | {
             'num_choices':  len(self.participant.vars['mpl_choices']),
             'probability':  self.participant.vars['probability'],
-            'enforce_consistency': Constants.enforce_consistency
+            'enforce_consistency': Constants.enforce_consistency,
         }
 
 
@@ -70,14 +73,14 @@ class Decision(Page):
         progress = page / total * 100
 
         if Constants.one_choice_per_page:
-            return {
+            return base_template_vars(self.player) | {
                 'page':      page,
                 'total':     total,
                 'progress':  progress,
-                'choices':   [self.player.participant.vars['mpl_choices'][page - 1]]
+                'choices':   [self.player.participant.vars['mpl_choices'][page - 1]],
             }
         else:
-            return {
+            return base_template_vars(self.player) | {
                 'choices':   self.player.participant.vars['mpl_choices'],
             }
 
@@ -126,8 +129,6 @@ class Decision(Page):
             self.player.set_consistency()
             # set switching row
             self.player.set_switching_row()
-            # update part index
-            return self.player.update_part_index()
 
 
 # ******************************************************************************************************************** #
@@ -157,18 +158,18 @@ class Results(Page):
         choice_to_pay = self.participant.vars['mpl_choices'][round_to_pay - 1]
 
         if Constants.one_choice_per_page:
-            return {
+            return base_template_vars(self.player) | {
                 'choice_to_pay':  [choice_to_pay],
                 'option_to_pay':  self.player.in_round(round_to_pay).option_to_pay,
                 'payoff':         self.player.in_round(round_to_pay).payoff,
             }
         else:
-            return {
+            return base_template_vars(self.player) | {
                 'choice_to_pay':  [choice_to_pay],
                 'option_to_pay':  self.player.option_to_pay,
                 'payoff':         self.player.payoff,
                 'option_chosen': self.participant.vars['option_chosen'],
-                'index_to_pay': self.participant.vars['mpl_index_to_pay']
+                'index_to_pay': self.participant.vars['mpl_index_to_pay'],
             }
 
 

@@ -1,6 +1,9 @@
 from otree.api import Currency as c, currency_range
 from ._builtin import Page, WaitPage
 from .models import Constants
+from shared_utils import common_template_vars
+
+APP_NAME = 'dictator_hypothetical'
 
 
 class Altruism(Page):
@@ -8,14 +11,13 @@ class Altruism(Page):
     form_fields = ['altruism_hypothetical']
 
     def vars_for_template(self):
-        return dict(
+        return common_template_vars(
+            self.player,
+            Constants,
+            APP_NAME,
             endowment_str="{:,}".format(Constants.endowment),
             endowment=Constants.endowment,
-            part_index=self.participant.vars['part_index']
         )
-
-    def before_next_page(self):
-        return self.player.update_part_index()
 
 
 page_sequence = [Altruism]
