@@ -11,7 +11,10 @@ class Decision(Page):
     form_fields = ['negative_reciprocity']
 
     def vars_for_template(self):
-        return dict(
+        return common_template_vars(
+            self.player,
+            Constants,
+            APP_NAME,
             endowment=Constants.endowment,
             part_index=app_number(self.player, APP_NAME)
         )

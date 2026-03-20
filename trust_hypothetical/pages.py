@@ -5,9 +5,14 @@ from shared_utils import app_number
 
 APP_NAME = 'trust_hypothetical'
 
+APP_NAME = 'trust_hypothetical'
 
-def vars_for_all_templates(self):
-    return dict(
+
+def base_template_vars(player, page_number):
+    return common_template_vars(
+        player,
+        Constants,
+        APP_NAME,
         endowment=Constants.endowment,
         rate=Constants.rate,
         max_endowment=Constants.max_endowment,
@@ -15,7 +20,8 @@ def vars_for_all_templates(self):
         page=self.subsession.round_number,
         part_index=app_number(self.player, APP_NAME),
         currency=Constants.currency,
-        instructions=Constants.instructions_template
+        instructions=Constants.instructions_template,
+        page=page_number,
     )
 
 
@@ -32,6 +38,9 @@ class Introduction(Page):
     def is_displayed(self):
         return self.subsession.round_number == 1
 
+    def vars_for_template(self):
+        return base_template_vars(self.player, self.subsession.round_number)
+
     def before_next_page(self):
         return self.player.compute_endowment(),
 
@@ -47,7 +56,7 @@ class Receiver(Page):
         return self.subsession.round_number <= Constants.num_rounds - 1
 
     def vars_for_template(self):
-        return dict(
+        return base_template_vars(self.player, self.subsession.round_number) | dict(
             other_endowment=self.participant.vars['other_endowment'],
             final_endowment=self.participant.vars['final_endowment'],
             other_transfer=self.participant.vars['other_transfer']

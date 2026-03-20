@@ -6,6 +6,7 @@ from shared_utils import app_number
 
 APP_NAME = 'risk_mpl'
 
+APP_NAME = 'risk_mpl'
 
 # variables for all templates
 # --------------------------------------------------------------------------------------------------------------------
@@ -33,10 +34,10 @@ class Instructions(Page):
     # variables for template
     # ----------------------------------------------------------------------------------------------------------------
     def vars_for_template(self):
-        return {
+        return base_template_vars(self.player) | {
             'num_choices':  len(self.participant.vars['mpl_choices']),
             'probability':  self.participant.vars['probability'],
-            'enforce_consistency': Constants.enforce_consistency
+            'enforce_consistency': Constants.enforce_consistency,
         }
 
 
@@ -73,14 +74,14 @@ class Decision(Page):
         progress = page / total * 100
 
         if Constants.one_choice_per_page:
-            return {
+            return base_template_vars(self.player) | {
                 'page':      page,
                 'total':     total,
                 'progress':  progress,
-                'choices':   [self.player.participant.vars['mpl_choices'][page - 1]]
+                'choices':   [self.player.participant.vars['mpl_choices'][page - 1]],
             }
         else:
-            return {
+            return base_template_vars(self.player) | {
                 'choices':   self.player.participant.vars['mpl_choices'],
             }
 
@@ -158,18 +159,18 @@ class Results(Page):
         choice_to_pay = self.participant.vars['mpl_choices'][round_to_pay - 1]
 
         if Constants.one_choice_per_page:
-            return {
+            return base_template_vars(self.player) | {
                 'choice_to_pay':  [choice_to_pay],
                 'option_to_pay':  self.player.in_round(round_to_pay).option_to_pay,
                 'payoff':         self.player.in_round(round_to_pay).payoff,
             }
         else:
-            return {
+            return base_template_vars(self.player) | {
                 'choice_to_pay':  [choice_to_pay],
                 'option_to_pay':  self.player.option_to_pay,
                 'payoff':         self.player.payoff,
                 'option_chosen': self.participant.vars['option_chosen'],
-                'index_to_pay': self.participant.vars['mpl_index_to_pay']
+                'index_to_pay': self.participant.vars['mpl_index_to_pay'],
             }
 
 

@@ -6,6 +6,7 @@ from shared_utils import app_number
 
 APP_NAME = 'patience_staircase'
 
+APP_NAME = 'patience_staircase'
 
 # variables for all templates
 # --------------------------------------------------------------------------------------------------------------------
@@ -33,7 +34,7 @@ class Instructions(Page):
         return self.subsession.round_number == 1
 
     def vars_for_template(self):
-        return dict(
+        return base_template_vars(self.player) | dict(
             today=Constants.today,
             in_12_months=Constants.in_12_months
         )
@@ -64,11 +65,11 @@ class Decision(Page):
         page = self.subsession.round_number
         progress = page / total * 100
 
-        return {
+        return base_template_vars(self.player) | {
             'page':        page,
             'total':       total,
             'progress':    progress,
-            'sure_payoff': "{0:.0f}".format(self.participant.vars['icl_time_sure_payoffs'][page - 1])
+            'sure_payoff': "{0:.0f}".format(self.participant.vars['icl_time_sure_payoffs'][page - 1]),
         }
 
     # set sure payoffs for next choice, payoffs, and switching row
@@ -86,5 +87,4 @@ page_sequence = [Decision]
 
 if Constants.instructions:
     page_sequence.insert(0, Instructions)
-
 

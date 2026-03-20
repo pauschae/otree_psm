@@ -6,6 +6,7 @@ from shared_utils import app_number
 
 APP_NAME = 'risk_staircase'
 
+APP_NAME = 'risk_staircase'
 
 # variables for all templates
 # --------------------------------------------------------------------------------------------------------------------
@@ -31,6 +32,9 @@ class Instructions(Page):
     # ----------------------------------------------------------------------------------------------------------------
     def is_displayed(self):
         return self.subsession.round_number == 1
+
+    def vars_for_template(self):
+        return base_template_vars(self.player)
 
 
 # ******************************************************************************************************************** #
@@ -58,11 +62,11 @@ class Decision(Page):
         page = self.subsession.round_number
         progress = page / total * 100
 
-        return {
+        return base_template_vars(self.player) | {
             'page':        page,
             'total':       total,
             'progress':    progress,
-            'sure_payoff': "{0:.0f}".format(self.participant.vars['icl_sure_payoffs'][page - 1])
+            'sure_payoff': "{0:.0f}".format(self.participant.vars['icl_sure_payoffs'][page - 1]),
         }
 
     # set sure payoffs for next choice, payoffs, and switching row
@@ -93,12 +97,12 @@ class Results(Page):
         payoff_relevant = self.player.in_round(choice_to_pay).payoff_relevant
         sure_payoff = self.player.participant.vars['icl_sure_payoffs'][choice_to_pay - 1]
 
-        return {
+        return base_template_vars(self.player) | {
             'sure_payoff':     "{0:.0f}".format(sure_payoff),
             'option_to_pay':   option_to_pay,
             'payoff_relevant': payoff_relevant,
             'payoff':          self.player.in_round(choice_to_pay).payoff,
-            'payoff_ecu':      self.player.in_round(choice_to_pay).payoff_ecu
+            'payoff_ecu':      self.player.in_round(choice_to_pay).payoff_ecu,
         }
 
 

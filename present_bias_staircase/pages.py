@@ -6,6 +6,7 @@ from shared_utils import app_number
 
 APP_NAME = 'present_bias_staircase'
 
+APP_NAME = 'present_bias_staircase'
 
 # variables for all templates
 # --------------------------------------------------------------------------------------------------------------------
@@ -32,7 +33,7 @@ class Instructions(Page):
         return self.subsession.round_number == 1
 
     def vars_for_template(self):
-        return dict(
+        return base_template_vars(self.player) | dict(
             in_12_months=Constants.in_12_months,
             in_24_months=Constants.in_24_months
         )
@@ -63,11 +64,11 @@ class Decision(Page):
         page = self.subsession.round_number
         progress = page / total * 100
 
-        return {
+        return base_template_vars(self.player) | {
             'page':        page,
             'total':       total,
             'progress':    progress,
-            'sure_payoff': "{0:.0f}".format(self.participant.vars['icl_sure_payoffs'][page - 1])
+            'sure_payoff': "{0:.0f}".format(self.participant.vars['icl_sure_payoffs'][page - 1]),
         }
 
     # set sure payoffs for next choice, payoffs, and switching row

@@ -11,7 +11,10 @@ class Reciprocity(Page):
     form_fields = ['reciprocity']
 
     def vars_for_template(self):
-        return dict(
+        return common_template_vars(
+            self.player,
+            Constants,
+            APP_NAME,
             stranger_cost=Constants.stranger_cost,
             cheap_present=Constants.cheap_present,
             expensive_present=Constants.expensive_present,
