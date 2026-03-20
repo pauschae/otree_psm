@@ -2,6 +2,9 @@ from otree.api import Currency as c, currency_range
 from . import models
 from ._builtin import Page, WaitPage
 from .models import Constants
+from shared_utils import app_number
+
+APP_NAME = 'risk_staircase'
 
 
 # variables for all templates
@@ -14,7 +17,7 @@ def vars_for_all_templates(self):
         'p_lo': "{0:.0f}".format(100 - Constants.probability) + "%",
         'hi':   "{0:.0f}".format(Constants.lottery_hi),
         'lo':   "{0:.0f}".format(Constants.lottery_lo),
-        'part_index': self.participant.vars['part_index'],
+        'part_index': app_number(self.player, APP_NAME),
         'currency': Constants.currency
     }
 
@@ -68,8 +71,6 @@ class Decision(Page):
         self.player.set_sure_payoffs()
         self.player.update_switching_row()
         self.player.set_payoffs()
-        if self.subsession.round_number == Constants.num_choices:
-            self.player.update_part_index()
 
 
 # ******************************************************************************************************************** #
